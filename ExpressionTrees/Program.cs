@@ -19,8 +19,62 @@ namespace ExpressionTrees
             lesson_3();
             lesson_4();
             lesson_5();
+            lesson_6();
+            lesson_7();
 
+            Console.WriteLine("\nPress enter to exit");
             Console.ReadLine();
+        }
+
+        private static void lesson_7()
+        {
+            /*
+            The following lambda expression:       Func<int, bool> exp = x => x > 5;
+            The => lambda expression with the body is made up as below
+            This is pretty much how the compiler breaks down a lambda and converts to an expression tree except it doesn't
+            use all of the intermediate variables
+            Entity Framework (for example) takes the objects in the expression tree below and creates a SQL query
+            
+            Expression.Lambda --> has a generic (requires the types) and a non-generic (may be a possibility to create on the fly) version
+
+            */
+
+            Console.WriteLine("\n----> lesson 7 <----");
+
+            ParameterExpression parameter_expression = Expression.Parameter(typeof(int), "x");
+            ConstantExpression constant_expression = Expression.Constant(5, typeof(int));
+            BinaryExpression binary_expression = Expression.GreaterThan(parameter_expression, constant_expression);
+            Expression<Func<int, bool>> lambda_expression =
+                                            Expression.Lambda<Func<int, bool>>(binary_expression, parameter_expression);
+
+            // Most of the tie you wouldn't do the below as it can be slow/expensive
+            // Don't think this would be such a factor if we did this at startup?
+            Func<int, bool> a_delegate = lambda_expression.Compile();
+            Console.WriteLine(a_delegate(10));
+            Console.WriteLine(a_delegate(3));
+
+        }
+
+        private static void lesson_6()
+        {
+            /*
+            The following lambda expression:       Func<int, bool> exp = x => x > 5;
+            The ">" is broken down as a ParameterExpression as below
+
+            BinaryExpression is abstracted and could be GreaterThan, LessThan etc...
+
+            */
+
+            Console.WriteLine("\n----> lesson 6 <----");
+
+            ParameterExpression parameter_expression = Expression.Parameter(typeof(int), "x");
+            ConstantExpression constant_expression = Expression.Constant(5, typeof(int));
+            BinaryExpression binary_expression = Expression.GreaterThan(parameter_expression, constant_expression);
+
+            Console.WriteLine("binary_expression.NodeType: {0}", binary_expression.NodeType);
+            Console.WriteLine("binary_expression.Type: {0}", binary_expression.Type);
+            Console.WriteLine("binary_expression.Left: {0}", binary_expression.Left);
+            Console.WriteLine("binary_expression.Right: {0}", binary_expression.Right);
         }
 
         private static void lesson_5()
@@ -36,6 +90,8 @@ namespace ExpressionTrees
             ParameterExpression parameter_expression = Expression.Parameter(typeof(int), "x");
 
             Console.WriteLine("parameter_expression.NodeType: {0}", parameter_expression.NodeType);
+            Console.WriteLine("parameter_expression.Type: {0}", parameter_expression.Type);
+            Console.WriteLine("parameter_expression.Name: {0}", parameter_expression.Name);
         }
 
         private static void lesson_4()
